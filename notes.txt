@@ -1,0 +1,53 @@
+docker build -t nginx-node-app:v1 .
+
+docker images | grep nginx
+
+docker run -p 3000:3000 nginx-node-app:v1 -> running instance which we call container
+
+----container----
+
+docker ps
+
+docker stop <cont-id>
+
+----we want multiple instances of this container--- (docker compose)
+
+docker compose up --build -d
+
+docker ps (this shud have 3 instances of your app) -> (verify in localhost:3001, 3002 & 3003)
+
+docker logs <cont id>
+
+---Now instead of accesing each of them alone, we want LB (nginx) to send the request to these apps-----
+
+Terminal - brew install nginx, nginx -V (to locate where nginx.conf is present)
+
+--- check nginx.conf notes ---
+
+nginx -V
+
+after we reload our app is now redirected to localhost:8080
+
+check the nginx access.logs
+
+-----
+
+docker compose down -> stops the containers & server is down but nginx is still running
+
+docker compose up
+
+------------------
+
+we can see localhost request is not secure, we want to achieve that too
+so we create our own self signed cetificate using openSSL -IMP
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx-selfsigned.key -out nginx-selfsigned.crt
+
+specify the generates certs details in nginx.conf
+
+reload the nginx 
+
+nginx -h
+nginx -s stop/reload/reopen
+
+----Thats it------
